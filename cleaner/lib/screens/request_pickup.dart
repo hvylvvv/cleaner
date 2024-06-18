@@ -1,13 +1,12 @@
-
-import 'package:cleaner/screens/report.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cleaner/screens/home_screen.dart';
 import '../models/requestdata.dart';
-import 'login_screen.dart';
-import 'package:cleaner/screens/map.dart';
+import '../widgets/appbar.dart';
+import '../widgets/navbar.dart';
+
 
 class RequestPickup extends StatefulWidget {
   const RequestPickup({super.key});
@@ -89,73 +88,8 @@ class _RequestPickupState extends State<RequestPickup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(30, 43, 45, 100),
-      appBar: AppBar(
-        toolbarHeight: 70.0,
-        title: const Text(
-          'CLEANER+',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: const Color.fromRGBO(30, 43, 45, 200),
-      ),
-
-      endDrawer: Drawer(
-
-        child: ListView(
-          children: [
-            ListTile(
-              title: const Text("Home"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Map"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const Map(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Community"),
-              onTap: () {},
-            ),
-            ListTile(
-              title: const Text("Report"),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const Report(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Log Out"),
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-
+      appBar: const CleanerAppBar(title: 'CLEANER+'),
+      endDrawer: Navbar(),
 
       body: Center(
         child: SafeArea(
@@ -172,7 +106,7 @@ class _RequestPickupState extends State<RequestPickup> {
                       Text(
                         "Request Pickup",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.w400,
                           fontSize: 35,
                         ),
@@ -180,21 +114,53 @@ class _RequestPickupState extends State<RequestPickup> {
                     ],
                   ),
                   const SizedBox(height: 30.0),
-                  const Row(
+                  Row(
                     children: [
-                      Text("Pickup Type", style: TextStyle(
-                          color: Colors.white,
-                          // fontWeight: FontWeight.w200,
+                      const Text("Pickup Type", style: TextStyle(
+                          color: Colors.black,
                         fontSize: 25,
                       ),),
+                      SizedBox(width: 10), // Adjust the width as needed
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Pickup Type Information"),
+                                content: const Text("Regular Household Waste includes everyday trash generated from kitchens, bathrooms, and general living areas.\n\n"
+                                    "Recycling Pickup is for recyclable materials such as paper, cardboard, plastics, glass, and metals.\n\n"
+                                    "Yard Waste Collection is for pickup of grass clippings, leaves, branches, and other organic yard waste."
+                                    "Bulk Item Pickupis for disposal of large items that cannot fit into regular trash bins, such as furniture, appliances, mattresses, or electronic waste.\n\n"
+                                    "Hazardous Waste Disposal is for disposal of hazardous materials like batteries, chemicals, paints, and solvents.\n\n"
+                                    "Construction Debris Pickup is for removal of materials resulting from renovation or construction projects, including wood, drywall, concrete, and other building materials.\n\n"
+                                    "Special Event Clean-Up is for temporary pickups to manage increased waste generated during events, festivals, or community gatherings."),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text("OK"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Tooltip(
+                          message: 'Select the type of pickup',
+                          child: Icon(Icons.info_outline, size: 18, color: Colors.grey),
+                        ),
+                      ),
+
                     ],
                   ),
                   Container(
                     padding: const EdgeInsets.only(left: 8, top:4),
                     decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 1.0),
                       borderRadius: BorderRadius.circular(15),
-                      color: Colors.white,
-
+                      color: Colors.white10,
                     ),
 
                     child: DropdownButton<String>(
@@ -205,24 +171,36 @@ class _RequestPickupState extends State<RequestPickup> {
                       underline: const SizedBox.shrink(), // This removes the underline
                       items: const [
                         DropdownMenuItem(
-                          value: "Pickup Type 1",
-                          child: Text("Pickup Type 1"),
+                          value: "Regular Household Waste",
+                          child: Text("Regular Household Waste"),
                         ),
                         DropdownMenuItem(
-                          value: "Pickup Type 2",
-                          child: Text("Pickup Type 2"),
+                          value: "Recycling Pickup",
+                          child: Text("Recycling Pickup"),
                         ),
                         DropdownMenuItem(
-                          value: "Pickup Type 3",
-                          child: Text("Pickup Type 3"),
+                          value: "Yard Waste Collection",
+                          child: Text("Yard Waste Collection"),
                         ),
                         DropdownMenuItem(
-                          value: "Pickup Type 4",
-                          child: Text("Pickup Type 4"),
+                          value: "Bulk Item Pickup",
+                          child: Text("Bulk Item Pickup"),
                         ),
                         DropdownMenuItem(
-                          value: "Pickup Type 5",
-                          child: Text("Pickup Type 5"),
+                          value: "Hazardous Waste Disposal",
+                          child: Text("Hazardous Waste Disposal"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Construction Debris Pickup",
+                          child: Text("Construction Debris Pickup"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Special Event Clean-Up",
+                          child: Text("Special Event Clean-Up"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Other",
+                          child: Text("Other"),
                         ),
                       ],
                       onChanged: (String? newValue) {
@@ -236,7 +214,7 @@ class _RequestPickupState extends State<RequestPickup> {
                   const Row(
                     children: [
                       Text("Date & Time",
-                        style: TextStyle(color: Colors.white,
+                        style: TextStyle(color: Colors.black,
                           fontSize: 25,))
                     ],
                   ),
@@ -248,7 +226,7 @@ class _RequestPickupState extends State<RequestPickup> {
                         child: TextField(
                           controller: datePicker,
                           decoration: InputDecoration(
-                            fillColor: Colors.white,
+                            fillColor: Colors.white10,
                             filled: true,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
@@ -278,7 +256,8 @@ class _RequestPickupState extends State<RequestPickup> {
                         child: TextField(
                           controller: timePicker,
                           decoration: InputDecoration(
-                            fillColor: Colors.white,
+                            fillColor: Colors.white10
+                            ,
                             filled: true,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
@@ -316,7 +295,7 @@ class _RequestPickupState extends State<RequestPickup> {
                           maxLines: 5,
                           keyboardType: TextInputType.multiline,
                           decoration: const InputDecoration(
-                              fillColor: Colors.white,
+                              fillColor: Colors.white10,
                               filled: true,
                               hintText: 'Anything to Add?',
                               hintStyle: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
@@ -326,7 +305,6 @@ class _RequestPickupState extends State<RequestPickup> {
                           ),
                         ),
                       ),
-                      // const SizedBox(height: 5),
                     ],
                   ),
                   // const SizedBox(height: 5),
@@ -347,7 +325,7 @@ class _RequestPickupState extends State<RequestPickup> {
                         ),
                         const Text(
                           'I want to receive updates',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: TextStyle(fontSize: 16, color: Colors.black),
                         ),
                       ],
                     ),
@@ -368,7 +346,7 @@ class _RequestPickupState extends State<RequestPickup> {
                         child: Text(
                           "Request Pickup",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

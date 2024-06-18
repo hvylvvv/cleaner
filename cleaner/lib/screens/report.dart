@@ -5,12 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:cleaner/screens/home_screen.dart';
 import 'package:cleaner/widgets/navbar.dart';
-
-
 
 class Report extends StatefulWidget {
   const Report({super.key});
@@ -19,32 +16,38 @@ class Report extends StatefulWidget {
   State<Report> createState() => _ReportState();
 }
 
-
 class _ReportState extends State<Report> {
-
   String? _selectedReportType;
   TextEditingController additionalInfoController = TextEditingController();
   bool isChecked = false;
-  File? _image;
+  bool _isLoading = false;
+  List<File> _images = [];
 
   final ImagePicker _picker = ImagePicker();
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  late final String documentID ;
+  late final String documentID;
 
+  Future<void> _pickImages() async {
+    final pickedFiles = await _picker.pickMultiImage();
 
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
+    setState(() {
+      _images = pickedFiles.map((pickedFile) => File(pickedFile.path)).toList();
+    });
+    }
+
+  Future<void> _captureImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
       setState(() {
-        _image = File(pickedFile.path);
+        _images.add(File(pickedFile.path));
       });
     }
   }
 
-  Future<void> navigateToHome()async {
+  Future<void> navigateToHome() async {
     Navigator.of(context).push(
         MaterialPageRoute(
             builder: (context) => const HomeScreen()
@@ -52,35 +55,35 @@ class _ReportState extends State<Report> {
     );
   }
 
+  Future<void> _uploadImagesAndSaveData() async {
+    if (_images.isEmpty) return;
+    setState(() {
+      _isLoading = true;
+    });
 
-
-
-
-
-
-
-
-  Future<void> _uploadImageAndSaveData() async {
-    if (_image == null) return;
     try {
       DocumentReference? reports;
-      // Upload image to Firebase Storage
-      String fileName = 'reports/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      TaskSnapshot snapshot = await _storage.ref().child(fileName).putFile(_image!);
-      String downloadUrl = await snapshot.ref.getDownloadURL();
+      List<String> downloadUrls = [];
+
+      // Upload images to Firebase Storage
+      for (File image in _images) {
+        String fileName = 'reports/${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+        TaskSnapshot snapshot = await _storage.ref().child(fileName).putFile(image);
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+        downloadUrls.add(downloadUrl);
+      }
 
       // Save report data to Firestore
       reports = await _firestore.collection('reports').add({
         'reportType': _selectedReportType,
         'additionalInfo': additionalInfoController.text,
-        'imageUrl': downloadUrl,
+        'imageUrls': downloadUrls,
         'receiveUpdates': isChecked,
         'timestamp': FieldValue.serverTimestamp(),
       });
-      await reports.update({'reportID' : reports.id});
+      await reports.update({'reportID': reports.id});
 
       String reportID = reports.id;
-
 
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -89,20 +92,14 @@ class _ReportState extends State<Report> {
           builder: (context) => ReportAddress(reportID: reportID),
         ),
       );
-
-
-      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report submitted successfully')));
-      // navigateToHome();
     } catch (e) {
-      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to submit report')));
+      // Handle error
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
-
-
-
-
-
-
 
   void _showPicker(context) {
     showModalBottomSheet(
@@ -115,7 +112,7 @@ class _ReportState extends State<Report> {
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Photo Library'),
                 onTap: () {
-                  _pickImage(ImageSource.gallery);
+                  _pickImages();
                   Navigator.of(context).pop();
                 },
               ),
@@ -123,7 +120,7 @@ class _ReportState extends State<Report> {
                 leading: const Icon(Icons.photo_camera),
                 title: const Text('Camera'),
                 onTap: () {
-                  _pickImage(ImageSource.camera);
+                  _captureImage();
                   Navigator.of(context).pop();
                 },
               ),
@@ -137,11 +134,8 @@ class _ReportState extends State<Report> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(30, 43, 45, 100),
       appBar: const CleanerAppBar(title: 'CLEANER+'),
       endDrawer: Navbar(),
-
-
       body: Center(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -156,7 +150,7 @@ class _ReportState extends State<Report> {
                       Text(
                         "File a Report",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 35,
                           fontWeight: FontWeight.w400,
                         ),
@@ -167,7 +161,7 @@ class _ReportState extends State<Report> {
                   const Row(
                     children: [
                       Text("Report Type", style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 25,
                       ),),
                     ],
@@ -175,6 +169,7 @@ class _ReportState extends State<Report> {
                   Container(
                     padding: const EdgeInsets.only(left: 16),
                     decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 0.8),
                       borderRadius: BorderRadius.circular(25),
                       color: Colors.white,
                     ),
@@ -184,16 +179,24 @@ class _ReportState extends State<Report> {
                       isExpanded: true,
                       items: const [
                         DropdownMenuItem(
-                          value: "Report Type 1",
-                          child: Text("Report Type 1"),
+                          value: "Blocked Drains and Waterways",
+                          child: Text("Blocked Drains and Waterways"),
                         ),
                         DropdownMenuItem(
-                          value: "Report Type 2",
-                          child: Text("Report Type 2"),
+                          value: "Missed Pickup",
+                          child: Text("Missed Pickup"),
                         ),
                         DropdownMenuItem(
-                          value: "Report Type 3",
-                          child: Text("Report Type 3"),
+                          value: "Illegal Dumping",
+                          child: Text("Illegal Dumping"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Non-compliance by Companies",
+                          child: Text("Non-compliance by Companies"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Other",
+                          child: Text("Other"),
                         ),
                       ],
                       onChanged: (String? newValue) {
@@ -228,20 +231,25 @@ class _ReportState extends State<Report> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 10,),
-                  _image == null
+                  _images.isEmpty
                       ? ElevatedButton(
                     onPressed: () => _showPicker(context),
-                    child: const Text('Upload Image'),
+                    child: const Text('Upload Images'),
                   )
-                      : GestureDetector(
-                    onTap: () => _showPicker(context),
-                    child: Image.file(
-                      _image!,
-                      height: 200,
-                      width: 200,
-                    ),
+                      : Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: _images.map((image) {
+                      return GestureDetector(
+                        onTap: () => _showPicker(context),
+                        child: Image.file(
+                          image,
+                          height: 100,
+                          width: 100,
+                        ),
+                      );
+                    }).toList(),
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
@@ -261,14 +269,16 @@ class _ReportState extends State<Report> {
                         ),
                         const Text(
                           'I want to receive updates',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: TextStyle(fontSize: 16, color: Colors.black),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _uploadImageAndSaveData,
+                  _isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                    onPressed: _uploadImagesAndSaveData,
                     child: const Text('Select Incident Location'),
                   ),
                   const SizedBox(height: 100),
@@ -281,4 +291,3 @@ class _ReportState extends State<Report> {
     );
   }
 }
-

@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Padding(
                       padding: EdgeInsets.only(left: 15),
                       child: Text(
-                        'Sat 8/6',
+                        'Sat 22/6',
                         style: TextStyle(
                           color: Color.fromRGBO(24,151,158, 100),
                           fontSize: 30,
@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 100, // Example height
                   width: 400,
                   child: Text("Pickup History",
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 25),),// Example width
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 25),),// Example width
                 ),
               ),
             ],
