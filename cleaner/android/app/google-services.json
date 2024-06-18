@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "185191729917",
+    "project_id": "cleaner-3c67d",
+    "storage_bucket": "cleaner-3c67d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185191729917:android:751044fc24cc82b1fc0c94",
+        "android_client_info": {
+          "package_name": "com.example.cleaner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALKpL8iLEjzUGJIJNWW0oqhPgTX3yTq1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
