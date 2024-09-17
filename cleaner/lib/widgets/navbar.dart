@@ -7,6 +7,7 @@ import 'package:cleaner/screens/map.dart';
 import 'package:cleaner/screens/report.dart';
 import 'package:cleaner/screens/login_screen.dart';
 import '../screens/account.dart';
+import 'package:cleaner/screens/reportmap.dart';
 import 'package:cleaner/models/userdata.dart'; // Adjust the path as needed
 
 class Navbar extends StatefulWidget {
@@ -100,7 +101,7 @@ class _NavbarState extends State<Navbar> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const Map(),
+                        builder: (context) => const ReportMap(),
                       ),
                     );
                   },
@@ -127,12 +128,13 @@ class _NavbarState extends State<Navbar> {
                     "Report",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
                   ),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const Report(),
-                      ),
-                    );
+                  onTap: ()
+                  {
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                        // builder: (context) => const Report(),
+                    //   ),
+                    // );
                   },
                 ),
                 const SizedBox(height: 10),

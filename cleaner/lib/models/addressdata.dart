@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddressData{
   final String addressLine1;
+  final String addressNeighbourhood;
   final String addressSuburb;
   final String addressParish;
   final String addressCountry;
@@ -9,6 +10,7 @@ class AddressData{
 
   const AddressData({
     required this.addressLine1,
+    required this.addressNeighbourhood,
     required this.addressSuburb,
     required this.addressParish,
     required this.addressCountry,
@@ -17,6 +19,7 @@ class AddressData{
 
   Map<String, dynamic> toJson() => {
     "AddressLine1": addressLine1,
+    "AddressNeighbourhood": addressNeighbourhood,
     "AddressSuburb": addressSuburb,
     "AddressParish": addressParish,
     "AddressCountry": addressCountry,
@@ -28,6 +31,7 @@ class AddressData{
     var snapshot = snap.data() as Map<String, dynamic>;
     return AddressData(
       addressLine1: snapshot['AddressLine1'],
+       addressNeighbourhood: snapshot['AddressNeighbourhood'],
       addressSuburb: snapshot['AddressSuburb'],
       addressParish: snapshot['Parish'],
       addressCountry: snapshot['Country'],

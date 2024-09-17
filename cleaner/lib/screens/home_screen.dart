@@ -28,17 +28,21 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // backgroundColor: const Color.fromRGBO(30, 43, 45, 100),
-      appBar: const CleanerAppBar(title: 'CLEANER+'),
-      endDrawer: Navbar(),
-      body: content(),
+    return WillPopScope(
+      onWillPop: () async {
+        // Return false to disable the back button
+        return false;
+      },
+      child: Scaffold(
+        // backgroundColor: const Color.fromRGBO(30, 43, 45, 100),
+        appBar: const CleanerAppBar(title: 'CLEANER+'),
+        endDrawer: Navbar(),
+        body: content(),
+      ),
     );
   }
-
 
   Widget content() {
     return Center(
@@ -49,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.only(bottom:20),
+                padding: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
@@ -70,29 +74,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
                     const Padding(
                       padding: EdgeInsets.only(left: 15),
                       child: Text(
                         'Sat 22/6',
                         style: TextStyle(
-                          color: Color.fromRGBO(24,151,158, 100),
+                          color: Color.fromRGBO(24, 151, 158, 100),
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 20),
-
                     Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                    child: ElevatedButton(
-                      onPressed: toggleCalendarVisibility,
-                      child: Text(_isCalendarVisible ? 'Hide Schedule' : 'See Schedule', style: const TextStyle(color: Colors.black),),
+                      padding: const EdgeInsets.only(left: 15),
+                      child: ElevatedButton(
+                        onPressed: toggleCalendarVisibility,
+                        child: Text(
+                          _isCalendarVisible ? 'Hide Schedule' : 'See Schedule',
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
                     ),
-                    ),
-
                     if (_isCalendarVisible) ...[
                       const SizedBox(height: 20),
                       Padding(
@@ -114,23 +117,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                 firstDay: DateTime.utc(2024, 01, 01),
                                 lastDay: DateTime.utc(2055),
                                 calendarStyle: const CalendarStyle(
+                                  weekendTextStyle: TextStyle(
+                                    color: Colors.red,
+                                  ),
                                   isTodayHighlighted: true,
                                   selectedDecoration: BoxDecoration(
                                     color: Colors.blue,
-                                    shape: BoxShape.circle
-                                  )
-
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 10,),
+                              const SizedBox(height: 10),
                               ElevatedButton(
                                 onPressed: navigateToPickupForm,
                                 style: ButtonStyle(
-                                  backgroundColor: WidgetStateProperty.all<Color>(
-                                    const Color.fromRGBO(24, 151, 158, 1), // Change button color
-                                  ),// Change button color// Change text color
+                                  backgroundColor:
+                                  MaterialStateProperty.all<Color>(
+                                    const Color.fromRGBO(24, 151, 158, 1),
+                                  ), // Change button color
                                 ),
-                                child: const Text('Request Pickup', style: TextStyle(color: Colors.white),),
+                                child: const Text(
+                                  'Request Pickup',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                               const SizedBox(height: 20),
                             ],
@@ -141,20 +150,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 50,),
+              const SizedBox(height: 50),
               Container(
-                // padding: const EdgeInsets.only(top: 25),
                 decoration: BoxDecoration(
-                  // color: Colors.red,
                   borderRadius: BorderRadius.circular(25),
                 ),
-
                 padding: const EdgeInsets.only(left: 16),
                 child: const SizedBox(
                   height: 100, // Example height
                   width: 400,
-                  child: Text("Pickup History",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 25),),// Example width
+                  child: Text(
+                    "Pickup History",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 25,
+                    ),
+                  ), // Example width
                 ),
               ),
             ],

@@ -118,21 +118,21 @@ class _AccountState extends State<Account> {
                 "Account Information",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 35,
+                  fontSize: 30,
                   fontWeight: FontWeight.w300,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 3,),
+          // const SizedBox(height: 3,),
           const Text("Is this correct?",
             style: TextStyle(
             color: Colors.black,
-            fontSize: 20,
+            fontSize: 15,
             fontWeight: FontWeight.w200,
           ),),
 
-          const SizedBox(height: 20,),
+          const SizedBox(height: 10,),
 
 
 
@@ -141,22 +141,22 @@ class _AccountState extends State<Account> {
             controller: _nameController,
             decoration: InputDecoration(labelText: 'Name'),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 5),
           TextField(
             controller: _phoneController,
             decoration: InputDecoration(labelText: 'Phone'),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 5),
           TextField(
             controller: _emailController,
             decoration: InputDecoration(labelText: 'Email'),
           ),
-          SizedBox(height: 35),
+          SizedBox(height: 5),
           ElevatedButton(
             onPressed: updateUserData,
             child: Text('Save Changes'),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           TextButton(
             onPressed: resetPassword,
             child: Text('Reset Password'),

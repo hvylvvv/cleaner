@@ -1,7 +1,9 @@
+
 import 'package:cleaner/screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +46,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(77, 192, 203, 1)),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      // home: const LoginScreen(),
+        home: LoginScreen(),
     );
   }
 }

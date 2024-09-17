@@ -75,6 +75,7 @@ class AuthMethods {
   Future<String> updateUserAddress({
 
     required String addressLine1,
+    required String addressNeighbourhood,
     required String addressSuburb,
     required String addressParish,
     required String addressCountry,
@@ -97,6 +98,7 @@ class AuthMethods {
         AddressData address = AddressData(
 
             addressLine1: addressLine1,
+            addressNeighbourhood: addressNeighbourhood,
             addressSuburb: addressSuburb,
             addressParish: addressParish,
             addressCountry: addressCountry,

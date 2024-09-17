@@ -3,7 +3,8 @@
 - Login snackbar and toast messages
 - Figure out how calendar on home page would work
 - Display pickup history on home page 
-
+- info to report form
+- condense request form info 
 
 Done
 - report has location feild now
