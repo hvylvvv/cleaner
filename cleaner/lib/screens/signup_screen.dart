@@ -94,11 +94,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       } else {
         // Handle error scenario
       }
+      }
 
       setState(() {
         _isLoading = false;
       });
-    }
   }
 
   String? _validateEmail(String? value) {

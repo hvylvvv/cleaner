@@ -104,8 +104,6 @@ class _SetupAddressState extends State<SetupAddress> {
               onPressed: () async {
                 updateUserAddress();
                 navigateToHome();
-
-
                 // Navigator.of(context).pop();
               },
               child: const Text('Confirm'),

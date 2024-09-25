@@ -3,6 +3,7 @@ import 'package:cleaner/screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:cleaner/models/locations.dart';
 
 
 void main() async {
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
       ),
       // home: const LoginScreen(),
         home: LoginScreen(),
+
     );
   }
 }

@@ -1,0 +1,132 @@
+{
+  "zone": {
+    "name": "ZONE 1",
+    "coordinator": {
+      "name": "Leighton Calder",
+      "phone": "876 480-7504"
+    },
+    "zonal_description": "Bordered on the west by Ocean Boulevard, Pechon Street and Rose Lane from North Street to Kingston Harbour, on the north by North Street, King Street, Beeston Street, East Queen Street and Victoria Avenue from Rose Lane to South Camp Road Windward Road intersection; bordered on the east by South Camp Road and the Barnes Gully from Victoria Avenue to the Harbour; on the South by the Kingston Harbour from Barnes Gully to Ocean Boulevard."
+  },
+  "schedule": [
+    {
+      "day": "Monday",
+      "area": "Main Roads",
+      "locations": [
+        "Mark Lane",
+        "Johns Lane",
+        "Georges Lane",
+        "Rum Lane",
+        "Rosemary Lane",
+        "Ocean Boulevard",
+        "Pechon Street",
+        "Rose Lane",
+        "North Street",
+        "King Street",
+        "Beeston Street",
+        "East Queen Street",
+        "Victoria Avenue"
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "area": "Main Roads",
+      "locations": [
+        "Maiden Lane",
+        "Gold Street",
+        "Foster Lane",
+        "Ocean Boulevard",
+        "Pechon Street",
+        "Rose Lane",
+        "North Street",
+        "King Street",
+        "Beeston Street",
+        "East Queen Street",
+        "Victoria Avenue"
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "area": "Main Roads",
+      "locations": [
+        "Fleet Street",
+        "Higholbourne Street",
+        "Ladd Lane",
+        "Ocean Boulevard",
+        "Pechon Street",
+        "Rose Lane",
+        "North Street",
+        "King Street",
+        "Beeston Street",
+        "East Queen Street",
+        "Victoria Avenue"
+      ]
+    },
+    {
+      "day": "Thursday",
+      "area": "Main Roads",
+      "locations": [
+        "Mark Lane",
+        "Johns Lane",
+        "Georges Lane",
+        "Rum Lane",
+        "Rosemary Lane",
+        "Ocean Boulevard",
+        "Pechon Street",
+        "Rose Lane",
+        "North Street",
+        "King Street",
+        "Beeston Street",
+        "East Queen Street",
+        "Victoria Avenue"
+      ]
+    },
+    {
+      "day": "Friday",
+      "area": "Main Roads",
+      "locations": [
+        "Maiden Lane",
+        "Gold Street",
+        "Foster Lane",
+        "Ocean Boulevard",
+        "Pechon Street",
+        "Rose Lane",
+        "North Street",
+        "King Street",
+        "Beeston Street",
+        "East Queen Street",
+        "Victoria Avenue"
+      ]
+    },
+    {
+      "day": "Saturday",
+      "area": "Main Roads",
+      "locations": [
+        "Fleet Street",
+        "Higholbourne Street",
+        "Ladd Lane",
+        "Ocean Boulevard",
+        "Pechon Street",
+        "Rose Lane",
+        "North Street",
+        "King Street",
+        "Beeston Street",
+        "East Queen Street",
+        "Victoria Avenue"
+      ]
+    },
+    {
+      "day": "Sunday",
+      "area": "Main Roads",
+      "locations": [
+        "Ocean Boulevard",
+        "Pechon Street",
+        "Rose Lane",
+        "North Street",
+        "King Street",
+        "Beeston Street",
+        "East Queen Street",
+        "Victoria Avenue"
+      ]
+    }
+  ]
+}

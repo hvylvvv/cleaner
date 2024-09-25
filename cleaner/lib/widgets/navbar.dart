@@ -130,11 +130,11 @@ class _NavbarState extends State<Navbar> {
                   ),
                   onTap: ()
                   {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                        // builder: (context) => const Report(),
-                    //   ),
-                    // );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const Report(),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(height: 10),
