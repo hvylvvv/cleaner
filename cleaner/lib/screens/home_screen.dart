@@ -1,7 +1,3 @@
-
-
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:cleaner/screens/report.dart';
 import '../screens/account.dart';
 import 'package:cleaner/screens/create_community_post.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 
 
@@ -37,6 +35,49 @@ class UserService {
       return null;
     }
   }
+
+  Future<String?> getStreetName(String userId) async {
+    try {
+      // Fetch the user document by userId
+      DocumentSnapshot userSnapshot = await _firestore.collection('users').doc(userId).get();
+
+      if (userSnapshot.exists) {
+        // Access the AddressLine1 field
+        String addressLine1 = userSnapshot.get('AddressLine1');
+
+        // Extract the street name (e.g., "Mark Lane" from "5 Mark Lane")
+        String streetName = extractStreetName(addressLine1);
+
+        // Fetch the locations document using the street name
+        DocumentSnapshot locationSnapshot = await _firestore.collection('locations').doc(streetName).get();
+
+        if (locationSnapshot.exists) {
+          // You can access other data in the location document if needed
+          // For example, return the street name or any other relevant field
+          return streetName;  // or locationSnapshot.get('desiredField');
+        } else {
+          print('Location not found');
+          return null;
+        }
+      } else {
+        print('User not found');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      return null;
+    }
+  }
+
+  String extractStreetName(String addressLine1) {
+    // Assuming address format "5 Mark Lane", we can split it and get the last part
+    List<String> parts = addressLine1.split(' ');
+    if (parts.length > 1) {
+      return parts.sublist(1).join(' '); // Join the parts after the first one
+    }
+    return addressLine1; // Return the original if no split occurs
+  }
+
 }
 
 
@@ -48,6 +89,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   bool _isCalendarVisible = false;
   String _nextPickupDate = 'Loading...';
   String? _communityName;
@@ -60,7 +102,36 @@ class _HomeScreenState extends State<HomeScreen> {
     fetchCommunityAndPickupDate();
   }
 
-  // Fetch the community and the next pickup date
+
+  Future<String?> getStreetName(String userId) async {
+    try {
+      // Fetch the user document by userId
+      DocumentSnapshot userSnapshot = await firestore.collection('users').doc(userId).get();
+
+      if (userSnapshot.exists) {
+        // Access the AddressLine1 field (or however your street name is stored)
+        String addressLine1 = userSnapshot.get('AddressLine1');
+        String streetName = extractStreetName(addressLine1); // Implement this function
+        return streetName;
+      } else {
+        print('User not found');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+      return null;
+    }
+  }
+
+// This is a simple example of extracting the street name from the address
+  String extractStreetName(String address) {
+    // Split the address by spaces and return the last part
+    // You can customize this logic based on your address format
+    List<String> parts = address.split(' ');
+    return parts.length > 1 ? parts.sublist(1).join(' ') : address; // Adjust as needed
+  }
+
+
   Future<void> fetchCommunityAndPickupDate() async {
     User? user = FirebaseAuth.instance.currentUser;
     String? userId = user?.uid; // Replace with actual user ID
@@ -75,24 +146,34 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       fetchNextPickupDate(community); // Fetch next pickup date using the community name
     } else {
-      setState(() {
-        _nextPickupDate = 'Community not found';
-      });
+      // If community name is not found, check the street name
+      String? streetName = await UserService().getStreetName(userId);
+      if (streetName != null) {
+        setState(() {
+          print("Street name found: $streetName");
+        });
+        fetchNextPickupDate(streetName); // Fetch next pickup date using the street name
+      } else {
+        setState(() {
+          _nextPickupDate = 'Community not found';
+        });
+      }
     }
   }
 
-  Future<void> fetchNextPickupDate(String communityName) async {
+  Future<void> fetchNextPickupDate(String name) async {
     try {
-      // Fetch the document for the community
-      DocumentSnapshot communitySnapshot = await FirebaseFirestore.instance
+      name = name.trim();
+      // Fetch the document for the community or street name
+      DocumentSnapshot locationSnapshot = await FirebaseFirestore.instance
           .collection('locations')
-          .doc(communityName)
+          .doc(name)
           .get();
 
       // Check if the document exists
-      if (communitySnapshot.exists) {
+      if (locationSnapshot.exists) {
         // Fetch the 'days' field
-        List<dynamic> pickupDays = communitySnapshot.get('days');
+        List<dynamic> pickupDays = locationSnapshot.get('days');
 
         // Log fetched days for debugging
         print("Fetched pickup days: $pickupDays");
@@ -113,9 +194,9 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
       } else {
-        print("Community document not found for $communityName");
+        print("Location document not found for $name");
         setState(() {
-          _nextPickupDate = 'No community found';
+          _nextPickupDate = 'No address found';
         });
       }
     } catch (e) {
@@ -125,9 +206,6 @@ class _HomeScreenState extends State<HomeScreen> {
       print('Error fetching pickup date: $e');
     }
   }
-
-
-
 
   DateTime? getNextPickupDateForMultipleDays(List<String> pickupDays) {
     Map<String, int> dayOfWeekMap = {
@@ -161,26 +239,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  // void _showInfoDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text('Information'),
-  //         content: const Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //             child: const Text('Close'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
 
   void toggleCalendarVisibility() {
     setState(() {
@@ -196,6 +254,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> openExternalLink(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -204,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         appBar: const CleanerAppBar(title: 'CLEANER+'),
-        endDrawer: Navbar(),
+        endDrawer: const Navbar(),
         body: content(),
       ),
     );
@@ -216,6 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
         widthFactor: 0.89,
         heightFactor: 0.95,
         child: SingleChildScrollView(
+          // scrollDirection: Axis.horizontal,
           child: Column(
             children: [
               const SizedBox(height: 20),
@@ -226,51 +296,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 width: 400,
+
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 30),
                     const Padding(
-                      padding: EdgeInsets.only(left: 15),
+                      padding: EdgeInsets.only(left: 10),
                       child: Text(
                         "Next Collection Date:",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 29.5,
+                          fontSize: 29,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(left: 15),
-                    //   child: Text(
-                    //     _nextPickupDate,
-                    //     style: const TextStyle(
-                    //       color: Color.fromRGBO(24, 151, 158, 100),
-                    //       fontSize: 30,
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //   ),
-                    // ),
-                    //
-                    // IconButton(
-                    //   icon: const Icon(Icons.info_outline, color: Colors.white),
-                    //   onPressed: _showInfoDialog,
-                    // ),
 
                     Padding(
-                      padding: const EdgeInsets.only(left: 15),
+                      padding: const EdgeInsets.only(left: 10),
                       child: Row(
                         children: [
                           Text(
                             _nextPickupDate,
                             style: const TextStyle(
                               color: Color.fromRGBO(24, 151, 158, 100),
-                              fontSize: 30,
+                              fontSize: 26,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          // const SizedBox(width: 0.5), // Add some space between the text and the icon
                           IconButton(
                             icon: const Icon(Icons.info_outline, color: Colors.white),
                             onPressed: () {
@@ -279,8 +333,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: const Text("What's this?"),
-                                    // content: const Text('Your pickup date is the next date that the garbage in your area is scheduled to be collected. '),
-                                    //toadd - community name and days listed in db. "for <your community>, collection is scheduled for <days>.
                                     content: RichText(
                                       text: TextSpan(
                                         style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -296,22 +348,52 @@ class _HomeScreenState extends State<HomeScreen> {
                                             style: const TextStyle(fontWeight: FontWeight.bold),
                                           ),
                                           const TextSpan(
-                                            text: ', collection is scheduled for:\n',
+                                            text: ', collection is scheduled for: ',
                                           ),
                                           TextSpan(
-                                            text: pickupDays.join(', '),
+                                            text: pickupDays.join(',\n\n\n'),
                                             style: const TextStyle(fontWeight: FontWeight.bold),
                                           ),
-                                          const TextSpan(
-                                            text: '.',
-                                          ),
+                                          // TextSpan(
+                                          //   text: '\n\n\nIf you get an error, try using the Quick Links section to visit the NSWMA Website, and enter a listed location closest to you in th 'Update Your Account Information' Section '.',
+                                          //   style: const TextStyle(fontWeight: FontWeight.bold),
+                                          // ),
+
+                                          TextSpan(
+                                            text: '\n\n\nIf you get an error, try using the ',
+                                            style: TextStyle(fontWeight: FontWeight.normal),
+                                            children: [
+                                              TextSpan(
+                                                text: 'Quick Links',
+                                                style: TextStyle(fontWeight: FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                text: ' section to',
+                                                style: TextStyle(fontWeight: FontWeight.normal),
+                                              ),
+                                              TextSpan(
+                                                text: ' Visit the NSWMA Website',
+                                                style: TextStyle(fontWeight: FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                text: ', and enter a listed location closest to you in the ',
+                                                style: TextStyle(fontWeight: FontWeight.normal),
+                                              ),
+                                              TextSpan(
+                                                text: 'Update Your Account Information',
+                                                style: TextStyle(fontWeight: FontWeight.bold),
+                                              ),
+                                              TextSpan(
+                                                text: ' Section.',
+                                                style: TextStyle(fontWeight: FontWeight.normal),
+                                              ),
+                                            ],
+                                          )
+
+
                                         ],
                                       ),
                                     ),
-                                    // content: Text(
-                                    //     'Your pickup date is the next date that the garbage in your area is scheduled to be collected.'
-                                    //         'For $_communityName, collection is scheduled for the following days: ${pickupDays.join(', ')}.'
-                                    // ),
                                     actions: [
                                       TextButton(
                                         onPressed: () {
@@ -392,18 +474,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
-
-
-
-
-
                     ],
                   ],
                 ),
               ),
               const SizedBox(height: 30,),
               Container(
-                padding: const EdgeInsets.only(left: 15), // Optional padding for spacing from the left
+                padding: const EdgeInsets.only(left: 10), // Optional padding for spacing from the left
                 alignment: Alignment.centerLeft, // Aligns the text to the left
                 child: const Text(
                   "Quick Links",
@@ -426,7 +503,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
+                      child: const Text(
                         "Request a Pick-up",
                         style: TextStyle(
                           fontSize: 20,
@@ -436,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10), // Spacing between tappable texts
+                  const SizedBox(height: 5), // Spacing between tappable texts
                   GestureDetector(
                     onTap: ()
                     {
@@ -448,7 +525,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
+                      child: const Text(
                         "File a Report",
                         style: TextStyle(
                           fontSize: 20,
@@ -460,7 +537,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
 
-                  const SizedBox(height: 10), // Spacing between tappable texts
+                  const SizedBox(height: 5), // Spacing between tappable texts
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(
@@ -471,7 +548,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
+                      child: const Text(
                         "Update Your Account Information",
                         style: TextStyle(
                           fontSize: 20,
@@ -482,7 +559,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 10), // Spacing between tappable texts
+                  const SizedBox(height: 5), // Spacing between tappable texts
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(
@@ -493,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
+                      child: const Text(
                         "View Current Notices & Alerts",
                         style: TextStyle(
                           fontSize: 20,
@@ -504,11 +581,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
+                  const SizedBox(height: 5), // Spacing between tappable texts
+                  GestureDetector(
+                    onTap: () {
+                      openExternalLink('https://www.nswma.gov.jm/collection-schedule/');
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: const Text(
+                        "Visit the NSWMA website",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-
-
-
             ],
           ),
         ),

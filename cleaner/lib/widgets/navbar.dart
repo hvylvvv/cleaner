@@ -8,7 +8,8 @@ import 'package:cleaner/screens/report.dart';
 import 'package:cleaner/screens/login_screen.dart';
 import '../screens/account.dart';
 import 'package:cleaner/screens/reportmap.dart';
-import 'package:cleaner/models/userdata.dart'; // Adjust the path as needed
+import 'package:cleaner/models/userdata.dart';
+
 
 class Navbar extends StatefulWidget {
   const Navbar({super.key});
@@ -143,6 +144,30 @@ class _NavbarState extends State<Navbar> {
                   color: Colors.grey[300],
                   margin: const EdgeInsets.symmetric(horizontal: 16.0),
                 ),
+
+                // ListTile(
+                //   leading: const Icon(Icons.report, color: Colors.grey),
+                //   title: const Text(
+                //     "Drafts",
+                //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+                //   ),
+                //   onTap: ()
+                //   {
+                //     Navigator.of(context).push(
+                //       MaterialPageRoute(
+                //         builder: (context) => const DraftsPage(),
+                //       ),
+                //     );
+                //   },
+                // ),
+                // const SizedBox(height: 10),
+                // Container(
+                //   height: 1,
+                //   color: Colors.grey[300],
+                //   margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                // ),
+
+
                 ListTile(
                   leading: const Icon(Icons.settings, color: Colors.grey),
                   title: const Text(

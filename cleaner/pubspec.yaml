@@ -27,6 +27,8 @@ dependencies:
   open_route_service: ^1.2.4
   shared_preferences: ^2.0.7
   intl: ^0.19.0
+#  flutter_compass: 0.8.0  # Add this line
+
 #  flutter_secure_storage: ^5.0.2
 #  multi_image_picker_view: ^1.0.2
 
@@ -35,4 +37,18 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
 flutter:
+  fonts:
+    - family: MontserratAlternates
+      fonts:
+        - asset: assets/fonts/MontserratAlternates-Regular.ttf
+        - asset: assets/fonts/MontserratAlternates-Bold.ttf
+  assets:
+    - android/app/src/main/res/drawable/background.png
+    - assets/pngs/background.png
+    - assets/pngs/background2.png
   uses-material-design: true
+
+flutter_native_splash:
+  color: "#ffffff" # Background color
+  image: android/app/src/main/res/drawable/background.png # Path to your splash image
+  android: true # Enable Android splash screen
