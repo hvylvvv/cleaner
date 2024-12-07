@@ -32,6 +32,7 @@ class _SetupAddressState extends State<SetupAddress> {
     final TextEditingController addressSuburbController = TextEditingController(
       text: addressData['suburb'] ?? '',
     );
+
     final TextEditingController addressParishController = TextEditingController(
       text: addressData['county'],
     );

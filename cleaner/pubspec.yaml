@@ -11,7 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
-#  added
   flutter_native_splash: ^2.4.0
   firebase_core: ^2.31.1
   firebase_auth: ^4.19.6
@@ -28,7 +27,6 @@ dependencies:
   shared_preferences: ^2.0.7
   intl: ^0.19.0
 #  flutter_compass: 0.8.0  # Add this line
-
 #  flutter_secure_storage: ^5.0.2
 #  multi_image_picker_view: ^1.0.2
 
