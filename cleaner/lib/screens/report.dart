@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cleaner/screens/report_addr.dart';
 import 'package:cleaner/widgets/appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

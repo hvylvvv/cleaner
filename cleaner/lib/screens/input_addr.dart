@@ -75,10 +75,10 @@ class _SetupAddressState extends State<SetupAddress> {
                       labelText: 'Neighbourhood',
                     ),
                   ),
-                  // TextFormField(
-                  //   controller: addressSuburbController,
-                  //   decoration: const InputDecoration(labelText: 'Town'),
-                  // ),
+                  TextFormField(
+                    controller: addressSuburbController,
+                    decoration: const InputDecoration(labelText: 'Town'),
+                  ),
                   TextFormField(
                     controller: addressParishController,
                     decoration: const InputDecoration(labelText: 'Parish'),
