@@ -184,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           setState(() {
             _nextPickupDate = nextPickup != null
-                ? DateFormat('EEE d/M').format(nextPickup)
+                ? DateFormat('EEEE, d/M').format(nextPickup)
                 : 'No pickup days available';
             this.pickupDays = List<String>.from(pickupDays);  // Store pickup days for the dialog
           });
@@ -267,12 +267,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return WillPopScope(
       onWillPop: () async {
         return false;
       },
       child: Scaffold(
-        appBar: const CleanerAppBar(title: 'CLEANER+'),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          // toolbarHeight: 70.0,
+          title: Text(
+          'Cleaner+',
+          style: TextStyle(
+          color: Colors.white,
+          fontFamily: 'MontserratAlternates',
+          fontSize: screenWidth * 0.08,
+          fontWeight: FontWeight.w600,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color(0xFF599954),
+
+        ),
         endDrawer: const Navbar(),
         body: content(),
       ),
@@ -280,22 +297,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget content() {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Center(
       child: FractionallySizedBox(
-        widthFactor: 0.89,
-        heightFactor: 0.95,
+        widthFactor: screenWidth * 0.0023,
+        heightFactor: screenWidth * 0.0023,
         child: SingleChildScrollView(
           // scrollDirection: Axis.horizontal,
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              SizedBox(height: screenWidth * 0.0023),
               Container(
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: EdgeInsets.only(bottom: screenWidth * 0.02),
                 decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.circular(screenWidth * 0.05),
                 ),
-                width: 400,
+                width: screenWidth * 0.9,
 
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text(
                         "Next Collection Date:",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 29,
                           fontWeight: FontWeight.bold,
                         ),
@@ -320,13 +339,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(
                             _nextPickupDate,
                             style: const TextStyle(
-                              color: Color.fromRGBO(24, 151, 158, 100),
+                              color: Color(0xFF599954),
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.info_outline, color: Colors.white),
+                            icon: const Icon(Icons.info_outline, color: Color(0xFF599954)),
                             onPressed: () {
                               showDialog(
                                 context: context,
@@ -359,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           //   style: const TextStyle(fontWeight: FontWeight.bold),
                                           // ),
 
-                                          TextSpan(
+                                          const TextSpan(
                                             text: '\n\n\nIf you get an error, try using the ',
                                             style: TextStyle(fontWeight: FontWeight.normal),
                                             children: [
@@ -459,7 +478,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 onPressed: navigateToPickupForm,
                                 style: ButtonStyle(
                                   backgroundColor:
-                                  MaterialStateProperty.all<Color>(
+                                  WidgetStateProperty.all<Color>(
                                     const Color.fromRGBO(24, 151, 158, 1),
                                   ),
                                 ),

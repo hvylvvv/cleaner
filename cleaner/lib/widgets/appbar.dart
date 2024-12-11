@@ -7,17 +7,23 @@ class CleanerAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    // final screenHeight = MediaQuery.of(context).size.height;
+
     return AppBar(
       // toolbarHeight: 70.0,
-      title: const Text(
-        'CLEANER+',
+      title: Text(
+        'Cleaner+',
         style: TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.bold,
+          fontFamily: 'MontserratAlternates',
+          fontSize: screenWidth * 0.08,
+          fontWeight: FontWeight.w600,
         ),
       ),
       iconTheme: const IconThemeData(color: Colors.white),
-      backgroundColor: const Color.fromRGBO(30, 43, 45, 100),
+      backgroundColor: const Color(0xFF599954),
+
     );
   }
 
